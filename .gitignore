@@ -1,27 +1,17 @@
-# Python / venv
-__pycache__/
-*.pyc
-.venv/
-venv/
-
-# Docker
-*.log
-*.pid
-*.sock
-*.tmp
-
-# Local env & creds
+# env & secrets
 .env
-.env.*.local
-*.key
-*.pem
-
-# Nginx test artifacts
-*.bak
-
-# macOS / editor junk
+*.env
+# runtime data
+/data/
+**/sge.db
+# python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.venv/
+# editors/os
 .DS_Store
-*.swp
-
-# Anything under /deploy that is machine-generated
-deploy/**/generated/
+.vscode/
+.idea/
