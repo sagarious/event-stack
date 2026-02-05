@@ -36,3 +36,10 @@ echo; echo "--- body ---"
 curl -s -X POST "$BASE/api/v1/checkin" \
   -H "Content-Type: application/json" -H "X-API-Key: $API_KEY" \
   -d "{\"token\":\"$TOKEN\"}"
+
+echo; echo "6) status (token):"
+TOKEN_ONLY=$(python3 - <<PY <<<"$MINT_JSON"
+import sys, json; print(json.load(sys.stdin)["token"])
+PY
+)
+curl -sS "$BASE/api/v1/status/$TOKEN_ONLY" | head -c 200; echo
