@@ -1,3 +1,4 @@
+from fastapi import Response
 from typing import Optional
 from fastapi import FastAPI, HTTPException, Header, Request
 from fastapi.responses import Response, JSONResponse
@@ -29,6 +30,7 @@ _lock = threading.Lock()
 
 # Single app instance + proxy headers
 api = FastAPI(title="Sagarious Ticket Service")
+app = api
 
 def require_key(x_api_key: Optional[str]) -> None:
     if not API_KEY or x_api_key != API_KEY:
@@ -147,3 +149,7 @@ def mint(payload: dict, request: Request, x_api_key: Optional[str] = Header(None
             qr_url = f"{base}/api/v1/qr/{token}.png"
 
     return JSONResponse({"ok": True, "token": token, "qr_png_url": qr_url})
+@app.head("/api/v1/qr/{token}.png")
+def qr_head(token: str):
+    # Optionally validate token format; we only advertise availability here.
+    return Response(status_code=200, media_type="image/png")
