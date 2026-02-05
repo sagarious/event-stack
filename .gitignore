@@ -1,0 +1,27 @@
+# Python / venv
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Docker
+*.log
+*.pid
+*.sock
+*.tmp
+
+# Local env & creds
+.env
+.env.*.local
+*.key
+*.pem
+
+# Nginx test artifacts
+*.bak
+
+# macOS / editor junk
+.DS_Store
+*.swp
+
+# Anything under /deploy that is machine-generated
+deploy/**/generated/
