@@ -21,3 +21,9 @@ GET  /api/v1/status/{token}
 ## Nginx behavior
 /api/v1/qr/    -> Cache-Control: public, max-age=14400, immutable
 (other /api/**)-> Cache-Control: no-store
+
+### Caching / headers contract
+- `GET /api/v1/qr/{token}.png` → `Cache-Control: public, max-age=14400, immutable` (Cloudflare MISS→HIT)
+- `HEAD /api/v1/qr/{token}.png` → `Cache-Control: no-store` (method-mapped)
+- All other `/api/**` → `Cache-Control: no-store`
+- Rate limit (`/api/v1/checkin`): `429` JSON with `Retry-After: 10` and `Cache-Control: no-store`
