@@ -20,8 +20,8 @@ echo; echo "3) GET png (MISS then HIT):"
 curl -sS -I "$URL" | tr -d '\r' | sed -n '1,20p'
 curl -sS -I "$URL" | tr -d '\r' | sed -n '1,20p'
 
-echo; echo "4) HEAD png:"
+echo; echo "4) HEAD png (should be 200 + no-store):"
 curl -sS -I -X HEAD "$URL" | tr -d '\r' | sed -n '1,20p'
 
-echo; echo "5) /api/v1/checkin headers (no-store expected, allow: POST):"
+echo; echo "5) /api/v1/checkin headers (405 + no-store expected):"
 curl -sS -I "$BASE/api/v1/checkin" | tr -d '\r' | sed -n '1,20p'
