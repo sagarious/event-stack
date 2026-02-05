@@ -1,11 +1,22 @@
 name: CI
 on:
-  push: { branches: [ "main" ] }
-  pull_request:
+  push: { branches: [main] }
+  pull_request: { branches: [main] }
+
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Build ticket-service
-        run: docker build -t event-stack-ticket_service ./services/ticket-service
+      - uses: docker/setup-buildx-action@v3
+      - name: Build services
+        run: docker compose build
+      - name: Run ticket-service
+        run: |
+          docker compose up -d ticket-service
+          for i in {1..30}; do
+            curl -fsS http://127.0.0.1:8088/healthz && break
+            sleep 1
+          done
+      - name: Assert health body
+        run: '[ "$(curl -fsS http://127.0.0.1:8088/healthz)" = "ok" ]'
