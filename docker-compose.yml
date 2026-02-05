@@ -1,0 +1,22 @@
+services:
+  ticket_service:
+    build: ./services/ticket-service
+    container_name: ticket-service
+    environment:
+      SGE_SECRET: ${SGE_SECRET}
+      SGE_API_KEY: ${SGE_API_KEY}
+    ports:
+      - "8088:8088"
+    volumes:
+      - sge-data:/data
+    restart: unless-stopped
+    command: ["uvicorn","app:api","--host","0.0.0.0","--port","8088","--proxy-headers"]
+    healthcheck:
+      test: ["CMD-SHELL","python -c \"import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8088/healthz').status==200 else 1)\""]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  sge-data:
