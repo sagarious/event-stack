@@ -1,20 +1,23 @@
-# Event Stack – Ticket Service
+# event-stack
 
-FastAPI + Uvicorn microservice that mints ticket tokens, renders QR PNGs,
-and records check-ins. Deployed behind Nginx and Cloudflare.
+Small ticket service (FastAPI/Uvicorn) behind Nginx. QR PNGs are cacheable at Cloudflare; all other API routes are no-store.
 
-## Run (dev)
-1) Copy `.env.sample` to `.env` and set values.
-2) `docker compose up -d --build`
-3) Health: `curl -sS http://127.0.0.1:8088/healthz` → `ok`
+## Stack
+- Python 3.11 (FastAPI, Uvicorn)
+- Docker Compose
+- Nginx (HTTPS, Cloudflare real IP + caching)
+
+## Quickstart
+cp .env.example .env
+# set SGE_SECRET and SGE_API_KEY in .env
+docker compose up -d --build
 
 ## Endpoints
-- `POST /api/v1/mint`  -> `{ token, qr_png_url }`
-- `POST /api/v1/checkin` with `{token}` -> increments count
-- `GET  /api/v1/status/<token>` -> status JSON
-- `GET  /api/v1/qr/<token>.png` -> PNG (cached 4h at edge)
+GET  /healthz                  -> ok
+POST /api/v1/mint              -> { token, qr_png_url }
+POST /api/v1/checkin
+GET  /api/v1/status/{token}
 
-## Notes
-- Nginx caches only `/api/v1/qr/...png` for 4 hours.
-- All other API endpoints are `no-store` and rate-limited.
-- SQLite state is in the `event-stack_sge-data` Docker volume.
+## Nginx behavior
+/api/v1/qr/    -> Cache-Control: public, max-age=14400, immutable
+(other /api/**)-> Cache-Control: no-store
